@@ -1,0 +1,15 @@
+node_modules/
+dist/
+artifacts/
+test-results/
+playwright-report/
+release/
+.release-check/
+public/downloads/
+.netlify/
+.vercel/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store

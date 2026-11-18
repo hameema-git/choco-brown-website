@@ -1,0 +1,54 @@
+CHOCO BROWN - COMPLETE PROJECT
+
+MAKE IT LIVE WITHOUT INSTALLING ANYTHING
+
+1. Extract the ZIP. Open the choco-brown folder.
+2. Find the dist folder inside it. This is the ready-to-publish website.
+3. Sign in to your own Netlify account at https://app.netlify.com/login.
+4. Open https://app.netlify.com/drop.
+5. Drag the entire dist folder onto the upload area.
+6. Netlify will give you the live website address.
+
+Upload the dist folder, not just index.html. The images and fonts folders
+inside dist must be uploaded too. Keep the editable source project private.
+
+The separate choco-brown-live.zip contains the same ready-to-publish files.
+If you use that ZIP, extract it first and upload the folder that directly
+contains index.html.
+
+YOUR OWN DOMAIN
+
+Open your Netlify project's Domain management settings. Add the domain you
+own, then follow the exact DNS instructions shown by Netlify. Do not remove
+email-related DNS records. Check that HTTPS is active before sharing.
+
+EDITING THE WEBSITE
+
+Install Node.js 22.12 or a newer Node.js 22 release. Open a terminal inside
+the choco-brown folder, then run npm ci followed by npm run dev.
+
+After editing, run npm run build and upload the new dist folder to the
+Deploys page of the SAME Netlify project to update the existing live site.
+
+Menu and prices: src/data/menu.ts
+Phone and WhatsApp: src/data/menu.ts
+Page text and store addresses: src/App.tsx
+Images: public/images/
+Design: src/index.css
+
+IMPORTANT BEFORE PUBLISHING
+
+Confirm the bakery's phone number, prices, branch details, delivery links,
+and permission to use its branding. Images are generated and illustrative.
+Checkout prepares a WhatsApp request. It does not take payments or confirm
+an order. There is no backend, database, or admin dashboard in this version.
+
+Read DEPLOYMENT.md for complete instructions, Git-based publishing, Vercel,
+existing hosting, custom domains, updates, and troubleshooting.
+
+The archive excludes node_modules, credentials, logs, and test screenshots.
+All source code, images, local fonts, font licenses, build configuration,
+the dependency lockfile, browser tests, and the production build are included.
+
+Hosting accounts, a purchased domain, and live publishing are not included.
+README.md documents the remaining build-tool dependency advisory.

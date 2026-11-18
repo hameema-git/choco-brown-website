@@ -1,0 +1,41 @@
+CHOCO BROWN - DEPLOY ON VERCEL
+
+OPTION A - GitHub (recommended, easy updates)
+1. Create a new GitHub repository and upload this folder's contents
+   (do NOT upload node_modules or dist - they are not in this zip).
+2. Go to https://vercel.com/new and import the repository.
+3. Vercel detects Vite automatically (vercel.json already sets this):
+   Build command: npm run build    Output directory: dist
+4. Click Deploy. Every later push to GitHub redeploys the site.
+
+OPTION B - Vercel CLI
+1. Install Node.js 22.12+ then in this folder run:  npm ci
+2. Run:  npx vercel        (log in, accept defaults)
+3. Run:  npx vercel --prod
+
+CUSTOM DOMAIN: Vercel project > Settings > Domains > Add.
+
+WHATSAPP NUMBER: src/data/menu.ts  (WHATSAPP and PHONE).
+Format: country code + number, no + or spaces, e.g. https://wa.me/917025454597
+
+ORDER MESSAGE FORMAT: src/components/OrderDrawer.tsx (search "NEW ORDER").
+
+
+MENU MANAGER (shop owner page)  -  https://YOUR-SITE/manage
+The owner opens /manage on a phone, enters the PIN, and can:
+ - switch the shop OPEN / CLOSED (with an optional message)
+ - switch menu items on/off (unavailable items fade, like Swiggy)
+Changes show for customers within about a minute.
+
+ONE-TIME SETUP IN VERCEL (needed so changes are shared with all customers)
+1. Vercel project > Storage (or Marketplace) > add "Upstash Redis" (free plan)
+   and connect it to this project. It adds its own environment variables.
+2. Vercel project > Settings > Environment Variables > add:
+      ADMIN_PIN = a PIN only the owner knows (6+ digits)
+3. Deployments > Redeploy (so the new variables are used).
+Without step 1-3 the website still works normally (everything open and
+available); only /manage will say storage is not connected.
+
+NEW ITEMS: the developer adds the item, photo and details in
+src/data/menu.ts and public/images/. New items show as available by default.
+Never share the ADMIN_PIN in the code or in GitHub.
