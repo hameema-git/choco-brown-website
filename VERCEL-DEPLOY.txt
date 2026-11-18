@@ -25,7 +25,7 @@ MENU MANAGER (shop owner page)  -  https://YOUR-SITE/manage
 The owner opens /manage on a phone, enters the PIN, and can:
  - switch the shop OPEN / CLOSED (with an optional message)
  - switch menu items on/off (unavailable items fade, like Swiggy)
-Changes show for customers within about a minute.
+Changes show for customers within about a minute or two.
 
 ONE-TIME SETUP IN VERCEL (needed so changes are shared with all customers)
 1. Vercel project > Storage (or Marketplace) > add "Upstash Redis" (free plan)

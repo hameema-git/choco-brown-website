@@ -70,7 +70,7 @@ export function ManageMenu() {
     setNote("Saving...");
     try {
       setStatus(await saveStatus(pin, next));
-      setNote("Saved. Customers will see this within a minute.");
+      setNote("Saved. Customers will see this within a couple of minutes.");
     } catch (e) {
       setStatus(previous);
       setNote("");

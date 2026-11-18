@@ -35,6 +35,12 @@ type OrderDrawerProps = {
   onBrowse: () => void;
 };
 
+function formatTime(value: string) {
+  const [h, m] = value.split(":").map(Number);
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
+}
+
 export function OrderDrawer({
   unavailable,
   shopOpen,
@@ -51,6 +57,9 @@ export function OrderDrawer({
   const [name, setName] = useState("");
   const [store, setStore] = useState("Vennala");
   const [notes, setNotes] = useState("");
+  const [pickupDay, setPickupDay] = useState<"Today" | "Tomorrow">("Today");
+  const [pickupTime, setPickupTime] = useState("");
+  const [timeError, setTimeError] = useState("");
   const [nameError, setNameError] = useState("");
   const [requestLink, setRequestLink] = useState("");
   const items = products.filter((product) => cart[product.id]);
@@ -95,6 +104,20 @@ export function OrderDrawer({
       document.getElementById("pickup-name")?.focus();
       return;
     }
+    if (!pickupTime) {
+      setTimeError("Please choose your pickup time.");
+      document.getElementById("pickup-time")?.focus();
+      return;
+    }
+    if (pickupDay === "Today") {
+      const now = new Date();
+      const [h, m] = pickupTime.split(":").map(Number);
+      if (h * 60 + m <= now.getHours() * 60 + now.getMinutes()) {
+        setTimeError("That time has passed. Choose a later time or Tomorrow.");
+        document.getElementById("pickup-time")?.focus();
+        return;
+      }
+    }
     if (!items.length || hasUnavailable || !shopOpen) {
       setStep("bag");
       return;
@@ -105,6 +128,7 @@ export function OrderDrawer({
       `Name: ${name.trim()}`,
       "Type: Pickup",
       `Store: ${store}`,
+      `Pickup: ${pickupDay}, ${formatTime(pickupTime)}`,
       "",
       "*Items*",
       ...items.map(
@@ -114,6 +138,8 @@ export function OrderDrawer({
       "",
       `*Total: ${money(total)}*`,
       ...(notes.trim() ? ["", `Note: ${notes.trim()}`] : []),
+      "",
+      "Please confirm my order.",
     ].join("\n");
     const link = `${WHATSAPP}?text=${encodeURIComponent(message)}`;
     setRequestLink(link);
@@ -220,12 +246,17 @@ export function OrderDrawer({
             Your request is ready.
           </h3>
           <p>
-            Send your prepared message on WhatsApp. Our team will confirm your
-            treats, final price, and pickup time.
+            Send your prepared message on WhatsApp. Our team will reply to
+            confirm your treats, final price, and pickup time.
           </p>
           <p className="request-notice">
-            This is an order request, not a confirmed order. No payment has been
-            taken.
+            This is an order request, not a confirmed order. It is confirmed only
+            when the shop replies on WhatsApp. No payment has been taken.
+          </p>
+          <p className="request-notice">
+            Pickup: {pickupDay}, {formatTime(pickupTime)}. Please collect on
+            time. We hold your order for 15 minutes after your pickup time, then
+            it is treated as cancelled. Running late? Message us immediately.
           </p>
           <a
             className="button button-dark full-width"
@@ -282,12 +313,46 @@ export function OrderDrawer({
             <option value="Vennala">Vennala, near Arakkakadavu Bridge</option>
             <option value="Eroor">Eroor, Pulse Nagar Road</option>
           </select>
+          <label htmlFor="pickup-day">
+            Pickup time <span>*</span>
+          </label>
+          <div className="pickup-time-row">
+            <select
+              id="pickup-day"
+              value={pickupDay}
+              onChange={(event) => {
+                setPickupDay(event.target.value as "Today" | "Tomorrow");
+                setTimeError("");
+              }}
+              aria-label="Pickup day"
+            >
+              <option value="Today">Today</option>
+              <option value="Tomorrow">Tomorrow</option>
+            </select>
+            <input
+              id="pickup-time"
+              type="time"
+              value={pickupTime}
+              onChange={(event) => {
+                setPickupTime(event.target.value);
+                setTimeError("");
+              }}
+              required
+              aria-label="Pickup time"
+              aria-invalid={!!timeError}
+            />
+          </div>
+          {timeError && (
+            <p className="form-error" role="alert">
+              {timeError}
+            </p>
+          )}
           <label htmlFor="pickup-notes">
             A little note <span className="optional">(optional)</span>
           </label>
           <textarea
             id="pickup-notes"
-            placeholder="Preferred pickup time, a special occasion..."
+            placeholder="A special occasion, a message for the cake..."
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
             maxLength={300}
@@ -304,11 +369,17 @@ export function OrderDrawer({
           >
             Request on WhatsApp <MessageCircle size={19} />
           </button>
-          <p className="fine-print">
-            You'll send your request to the bakery on WhatsApp. Our team will
-            confirm your preferred store, availability, and final price before
-            you pay.
-          </p>
+          <div className="pickup-policy">
+            <p>
+              <strong>Not confirmed yet.</strong> Your order is confirmed only
+              when the shop replies to confirm it on WhatsApp.
+            </p>
+            <p>
+              <strong>Be on time.</strong> Collect at your pickup time. We hold
+              your order for 15 minutes after it. After that it is treated as
+              cancelled. Running late? Message us on WhatsApp straight away.
+            </p>
+          </div>
         </form>
       ) : items.length ? (
         <div className="bag-content">

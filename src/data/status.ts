@@ -28,7 +28,7 @@ export function parseStatus(input: unknown): ShopStatus {
 }
 
 export async function fetchStatus(pin?: string) {
-  const res = await fetch("/api/status", {
+  const res = await fetch(pin ? "/api/status?admin=1" : "/api/status", {
     cache: "no-store",
     headers: pin ? { "x-admin-pin": pin } : undefined,
   });
@@ -64,7 +64,9 @@ export function useShopStatus() {
   }, []);
   useEffect(() => {
     refresh();
-    const timer = window.setInterval(refresh, 60_000);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") refresh();
+    }, 60_000);
     const onFocus = () => document.visibilityState === "visible" && refresh();
     document.addEventListener("visibilitychange", onFocus);
     window.addEventListener("focus", onFocus);

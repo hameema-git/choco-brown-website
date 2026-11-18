@@ -30,10 +30,10 @@ function clean(input) {
   };
 }
 
-const json = (body, status = 200) =>
+const json = (body, status = 200, cache = "no-store") =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    headers: { "Content-Type": "application/json", "Cache-Control": cache },
   });
 
 const digest = (v) => createHash("sha256").update(String(v)).digest();
@@ -54,12 +54,15 @@ export async function GET(request) {
   try {
     const status = await load();
     const body = { ...status, storageConnected: !!(redisUrl() && redisToken()) };
-    if (request.headers.get("x-admin-pin")) {
+    // Owner check (?admin=1) is never cached. Public reads are cached 30s at
+    // Vercel's edge so many visitors cost only a few storage reads.
+    if (new URL(request.url).searchParams.get("admin") === "1") {
       const ok = pinOk(request);
       if (!ok) await new Promise((r) => setTimeout(r, 500));
       body.authorized = ok;
+      return json(body);
     }
-    return json(body);
+    return json(body, 200, "public, s-maxage=30, stale-while-revalidate=60");
   } catch {
     return json({ ...DEFAULT, storageConnected: false });
   }

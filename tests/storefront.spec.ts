@@ -117,6 +117,8 @@ test("WhatsApp checkout validates the name and prepares the full order request",
   );
   await bag.getByLabel("Your name").fill("Anu");
   await bag.getByLabel("Preferred store").selectOption("Eroor");
+  await bag.getByLabel("Pickup day").selectOption("Tomorrow");
+  await bag.getByLabel("Pickup time", { exact: true }).fill("16:30");
   await bag.getByLabel("A little note").fill("Pickup around 4 pm, please.");
   await page.evaluate(() => {
     window.open = (url) => {
@@ -138,6 +140,8 @@ test("WhatsApp checkout validates the name and prepares the full order request",
   expect(message).toContain("Name: Anu");
   expect(message).toContain("Type: Pickup");
   expect(message).toContain("Store: Eroor");
+  expect(message).toContain("Pickup: Tomorrow, 4:30 PM");
+  expect(message).toContain("Please confirm my order.");
   expect(message).toContain("1. Milk Chocolate Bun x 1 = \u20b935");
   expect(message).toContain("2. Classic Cream Bun x 1 = \u20b925");
   expect(message).toContain("*Total: \u20b960*");
